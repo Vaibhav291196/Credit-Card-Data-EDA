@@ -1,124 +1,351 @@
-Credit Card Portfolio Analysis & Customer Segmentation EDA
-Overview
-This project delivers an end-to-end Exploratory Data Analysis (EDA) and data handling framework to analyze credit card lifecycle metrics, spend typologies, and repayment behaviors. By synthesizing separate banking data files, this solution exposes customer demographic profiles, enforces risk-mitigation rules via data capping, and tracks seasonal financial variables across corporate segments and geographical regions.
+# Credit Card Data Exploratory Data Analysis (EDA)
 
-The project follows a rigorous data science workflow, including multi-file relational data merging, anomaly correction, out-of-bounds demographic engineering, business-rule capping, and multi-dimensional cohort aggregation.
+## 📌 Project Overview
 
-Problem Statement
-Retail banking institutions must monitor transactional spend metrics alongside repayment velocity to identify profitable customer segments and control credit risk. The objective of this analysis is to consolidate isolated user portfolios and provide clear visibility into:
+This project performs an in-depth Exploratory Data Analysis (EDA) on a Credit Card dataset containing customer demographics, spending transactions, repayments, credit limits, product categories, and city-level information.
 
-Customer base distribution across demographic groups and asset tiers.
+The objective is to uncover customer spending behavior, repayment trends, profitability patterns, product preferences, and geographical insights that can help financial institutions make data-driven business decisions.
 
-Behavioral spend patterns across distinct product categories.
+---
 
-Portfolio constraints caused by out-of-bounds demographic noise or transactions exceeding established credit limits.
+## 🎯 Business Objectives
 
-Dataset
-The analysis utilizes three primary data layers containing relational customer metrics:
+The analysis aims to answer the following business questions:
 
-1. Customer Acquisition
-Dimensions: 100 unique customer accounts.
+* Understand customer spending patterns.
+* Analyze repayment behavior over time.
+* Identify profitable periods and customer segments.
+* Determine top spending categories.
+* Identify cities generating maximum revenue.
+* Find high-value customers.
+* Compare yearly and monthly spending trends.
+* Analyze product-wise performance.
+* Estimate monthly earnings/profitability.
 
-Features: Customer ID, Age, City, Product tier (Gold, Silver, Platinum), Credit Limit, and Segment.
+---
 
-2. Spend
-Dimensions: Sequential credit card swipe records mapping itemized usage.
+## 📂 Dataset Description
 
-Features: Customer ID, Month (transaction date), Type (product category), and Amount.
+The project uses three datasets:
 
-3. Repayment
-Dimensions: 1,500 historic repayment records capturing user payment streams.
+### Customer Data
 
-Features: Customer ID, Month (repayment date), and Amount.
+Contains customer demographic and account information.
 
-Data Handling & Preprocessing Pipeline
-Data Ingestion & Relational Merging
-Primary datasets were ingested from spreadsheet sources using pandas.
+| Feature  | Description                        |
+| -------- | ---------------------------------- |
+| Customer | Customer ID                        |
+| Age      | Customer Age                       |
+| City     | Customer City                      |
+| Product  | Card Type (Gold, Platinum, Silver) |
+| Limit    | Credit Limit                       |
+| Company  | Company Code                       |
+| Segment  | Customer Segment                   |
 
-Synthesized separate tables into a centralized analytical data structure named customer_repayment using a relational outer join on the shared key Customer.
+---
 
-Demographic Noise Correction (Age Harmonization)
-Raw consumer profile data contained decimal noise and extreme age attributes.
+### Spend Data
 
-Applied systematic floor and ceiling functions to clean the profiles, structuring a standardized workforce demographic ranging from youth categories up to an established workforce limit of 42.28 years.
+Contains transaction-level spending information.
 
-Business Rule Implementation (Credit Limit Capping)
-To account for real-world risk-mitigation constraints, the script checks if a customer's individual transactional repayment or spend amount outstripped their card allowance.
+| Feature  | Description          |
+| -------- | -------------------- |
+| Customer | Customer ID          |
+| Date     | Transaction Date     |
+| Type     | Transaction Category |
+| Amount   | Spending Amount      |
 
-Capping Logic: If Amount > Limit, the script dynamically adjusts the value to match that specific customer's Limit ceiling. For instance, entry-level tiers with structural limits of 10,000 or 10,001 automatically had excessive records capped at those exact thresholds.
+Examples of transaction categories:
 
-Temporal Feature Engineering
-Raw date columns were parsed from string representations into true Datetime objects.
+* Petro
+* Food
+* Camera
+* Air Ticket
+* Train Ticket
+* Jewellery
+* Clothes
+* Sandals
+* Bus Ticket
 
-Extracted independent Month and Year periods to serve as time-series anchors for seasonal trend analysis.
+---
 
-Exploratory Data Analysis & Methods
-Several multi-dimensional aggregations were performed to profile credit card performance:
+### Repayment Data
 
-Key Operations Evaluated
-Unique Count Profiling: Isolated distinct entities using .nunique() to establish baseline population sizes.
+Contains customer repayment records.
 
-Geographic Segmentation: Aggregated financial transactions across 8 prominent cities to discover regional spend concentrations.
+| Feature  | Description      |
+| -------- | ---------------- |
+| Customer | Customer ID      |
+| Date     | Repayment Date   |
+| Amount   | Repayment Amount |
 
-Product Tier Mapping: Grouped portfolio parameters across card tiers (Gold, Silver, Platinum) to monitor limit availability.
+---
 
-Macro-Segment Analysis: Classified customer profiles into 5 distinct corporate classes (Self Employed, Salaried_MNC, Salaried_Pvt, Govt, and Normal Salary).
+## 🛠️ Technologies Used
 
-Asset Category Tracking: Component-level spending was tracked across various item classifications (e.g., CAMERA, BUS TICKET).
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Jupyter Notebook
 
-Key Findings
-1. Customer Base Topography
-The analyzed portfolio represents 100 distinct customer accounts.
+---
 
-Customer records are uniformly spread across 8 key urban centers and divided among 5 primary employment segments.
+## 📊 Data Preprocessing
 
-2. Risk and Limit Constraints
-High-wealth customers operating under premium profiles (Gold tier with credit ceilings up to 500,000) generate the most stable and high-volume transaction lines.
+### 1. Date Feature Engineering
 
-Consumers holding Silver or Platinum cards encounter hard credit boundaries much more frequently, as evidenced by the high invocation of the capping rule at lower boundaries (10,000 / 10,001).
+Extracted:
 
-3. Spend Dynamics
-Spending behavior varies significantly depending on the product tier, with premium tiers showing higher engagement with high-value retail categories, while lower tiers primarily drive volume through daily utilities and transport.
+```python
+Month
+Year
+```
 
-Business Recommendations
-Targeted Limit Extensions: Offer proactive credit limit increases to verified high-income customers within the Silver and Platinum tiers who frequently hit their credit ceilings.
+from transaction and repayment dates.
 
-Differentiated Reward Programs: Align credit card rewards with high-frequency categories; introduce specialized travel and transit incentives for entry-tier cards, and lifestyle rewards for premium gold tiers.
+---
 
-Dynamic Risk Adjustment: Use the temporal trend insights to predict peak seasonal spending months (e.g., holiday seasons) and adjust short-term transaction ceilings accordingly.
+### 2. Spending Amount Validation
 
-Technologies Used
-Python
+Business Rule:
 
-Pandas
+If spending exceeds the customer's credit limit:
 
-NumPy
+```python
+spent_amount = 0.5 * credit_limit
+```
 
+This prevents unrealistic spending values.
+
+---
+
+### 3. Data Integration
+
+Merged:
+
+* Customer Data
+* Spend Data
+* Repayment Data
+
+to perform combined analyses.
+
+---
+
+## 📈 Exploratory Data Analysis
+
+### Monthly Average Spending Trend
+
+Analyzed:
+
+```python
+customer_spend.groupby(['Year','Month'])['spent_amount'].mean()
+```
+
+Key Findings:
+
+* Spending generally increased from 2004 to 2006.
+* High spending observed during early months of the year.
+* Significant fluctuations across years.
+
+---
+
+### Monthly Average Repayment Trend
+
+Analyzed repayment patterns by:
+
+```python
+customer_repayment.groupby(['Year','Month'])['repayment_amount'].mean()
+```
+
+Findings:
+
+* Repayments generally follow spending trends.
+* Certain months show significantly higher repayment activity.
+
+---
+
+### Monthly Profitability Analysis
+
+Calculated:
+
+```python
+Monthly Profit = Repayment Amount - Spend Amount
+```
+
+Estimated earnings using:
+
+```python
+Monthly Earnings
+```
+
+Findings:
+
+* Positive profits observed in most periods.
+* Highest earnings recorded during selected months in 2005 and 2006.
+
+---
+
+## 🔍 Key Insights
+
+### Top 5 Spending Categories
+
+| Rank | Category     |
+| ---- | ------------ |
+| 1    | PETRO        |
+| 2    | CAMERA       |
+| 3    | FOOD         |
+| 4    | AIR TICKET   |
+| 5    | TRAIN TICKET |
+
+These categories contributed the largest share of spending.
+
+---
+
+### City with Maximum Spending
+
+| City      | Total Spending |
+| --------- | -------------- |
+| COCHIN    | Highest        |
+| BANGALORE | Second         |
+| CALCUTTA  | Third          |
+
+Cochin generated the highest overall spending volume.
+
+---
+
+### Top 10 Customers by Repayment
+
+Top customers include:
+
+* A61
+* A60
+* A42
+* A13
+* A38
+* A43
+* A40
+* A14
+* A44
+* A26
+
+These customers contribute significantly to repayment revenue.
+
+---
+
+### Product-wise Spending Analysis
+
+Compared spending across:
+
+* Gold
+* Platinum
+* Silver
+
+Findings:
+
+* Gold card holders generated the highest spending.
+* Platinum card users showed moderate spending.
+* Silver card users contributed the least spending volume.
+
+---
+
+### Year-wise Product Spending
+
+Analyzed:
+
+```python
+Year × City × Product
+```
+
+Insights:
+
+* Gold products consistently dominate spending across all cities.
+* Cochin and Bangalore contribute heavily to Gold card transactions.
+* Platinum card spending grew significantly in some cities over time.
+
+---
+
+### Monthly City-wise Spending
+
+Compared monthly expenditures for each city.
+
+Key observations:
+
+* Bangalore
+* Cochin
+* Calcutta
+
+showed consistently strong spending patterns across months.
+
+---
+
+### Air Ticket Spending Trend
+
+Year-wise spending on Air Tickets:
+
+| Year | Spending |
+| ---- | -------- |
+| 2004 | 5.56M    |
+| 2005 | 9.55M    |
+| 2006 | 8.66M    |
+
+Air travel spending peaked in 2005.
+
+---
+
+## 📉 Visualizations Included
+
+The project includes:
+
+* Bar Charts
+* Product-wise Spending Charts
+* Monthly Spending Analysis
+* Repayment Trend Analysis
+* Profit Trend Analysis
+* City-wise Spending Analysis
+* Year-wise Product Comparisons
+* Air Ticket Spending Analysis
+
+Built using:
+
+```python
 Matplotlib
-
 Seaborn
+```
 
-OpenPyXL (Excel Ingestion Engine)
+---
 
-Project Workflow
-Environment Setup & Library Ingestion (Pandas, NumPy, Seaborn)
+## 📁 Project Structure
 
-Data Ingestion from isolated relational sheets
+```text
+Credit-Card-EDA/
+│
+├── Credit_Card_Data_EDA.ipynb
+├── Credit_Card_Data_EDA.pdf
+├── datasets/
+   ├── Customer.csv
+   ├── Spend.csv
+   └── Repayment.csv
 
-Data Profiling (.nunique() and structural shape verification)
+```
 
-Age Harmonization & demographic data cleaning
+---
 
-Credit Limit Capping Implementation (Business rule application)
 
-Temporal Feature Extraction (Month and Year parsing)
+---
 
-Relational Table Merging via outer joins on Customer
+## 📌 Business Recommendations
 
-Cohort Aggregation across Cities, Segments, and Product Tiers
+1. Focus marketing campaigns on high-spending cities such as Cochin, Bangalore, and Calcutta.
+2. Promote Gold cards since they generate the highest spending.
+3. Offer loyalty programs to top repayment customers.
+4. Increase partnerships in Petro, Camera, and Travel categories.
+5. Monitor months with lower profitability and improve customer engagement.
 
-Behavioral Tracking across asset spend categories
+---
 
-Data Visualization of seasonal trends and portfolio distributions
+## 📚 Conclusion
 
-Insight Extraction & Reporting
+This EDA provides valuable insights into customer spending behavior, repayment trends, product performance, and city-level revenue generation. The findings can help financial institutions optimize credit card offerings, improve customer retention strategies, and maximize profitability through data-driven decision making.
+
