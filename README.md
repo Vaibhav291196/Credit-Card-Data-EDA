@@ -322,11 +322,7 @@ Seaborn
 Credit-Card-EDA/
 │
 ├── Credit_Card_Data_EDA.ipynb
-├── Credit_Card_Data_EDA.pdf
-├── datasets/
-   ├── Customer.csv
-   ├── Spend.csv
-   └── Repayment.csv
+├── Readme.md
 
 ```
 
